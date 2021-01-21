@@ -18,8 +18,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     //Channel channel = ctx.channel();
     //ChannelPipeline pipeline = ctx.pipeline(); //本质是一个双向链接, 出站入站
     //将 msg 转成一个 ByteBuf，类似NIO 的 ByteBuffer
-    ByteBuf buf = (ByteBuf) msg;
-    System.out.println("客户端发送消息是:" + buf.toString(CharsetUtil.UTF_8));
+    System.out.println("客户端发送消息是:" + msg);
   }
 
   @Override

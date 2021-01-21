@@ -9,6 +9,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
 import io.netty.util.Constant;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,9 +26,11 @@ public class NettyClient {
           .channel(NioSocketChannel.class) // 使用 NioSocketChannel 作为客户端的通道实现
           .handler(new ChannelInitializer<SocketChannel>() {
             @Override
-            protected void initChannel(SocketChannel channel) throws Exception {
+            protected void initChannel(SocketChannel socketChannel) throws Exception {
               //加入处理器
-              channel.pipeline().addLast(new NettyClientHandler());
+              socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));
+              socketChannel.pipeline().addLast(new StringDecoder());
+              socketChannel.pipeline().addLast(new NettyClientHandler());
             }
           });
       System.out.println("netty client start");
@@ -35,11 +39,9 @@ public class NettyClient {
       String reqStr = "我是客户端请求1$_";
 
       // 发送客户端的请求
-      channel.writeAndFlush(Unpooled.copiedBuffer(reqStr.getBytes("UTF-8")));
-      Thread.sleep(300);
-      channel.writeAndFlush(Unpooled.copiedBuffer("我是客户端请求2$_---".getBytes("UTF-8")));
-      Thread.sleep(300);
-      channel.writeAndFlush(Unpooled.copiedBuffer("我是客户端请求3$_".getBytes("UTF-8")));
+      for(int i =0;i<1000;i++){
+        channel.writeAndFlush(Unpooled.copiedBuffer("$_123456\n".getBytes("UTF-8")));
+      }
 
 
       // 等待直到连接中断
